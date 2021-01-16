@@ -96,28 +96,28 @@
 
 typedef struct
 {
-	volatile int32_t CRL;				//Port configuration register low	OFSET:0x00
-	volatile int32_t CRH;				//Port configuration register high	OFSET:0x04
-	volatile int32_t IDR;				//Port input data register			OFSET:0x08
-	volatile int32_t ODR;				//Port output data register			OFSET:0x0C
-	volatile int32_t BSRR;				//Port bit set/reset register		OFSET:0x10
-	volatile int32_t BRR;				//Port bit reset register			OFSET:0x14
-	volatile int32_t LCKR;				//Port configuration lock register	OFSET:0x18
+	volatile uint32_t CRL;				//Port configuration register low	OFSET:0x00
+	volatile uint32_t CRH;				//Port configuration register high	OFSET:0x04
+	volatile uint32_t IDR;				//Port input data register			OFSET:0x08
+	volatile uint32_t ODR;				//Port output data register			OFSET:0x0C
+	volatile uint32_t BSRR;				//Port bit set/reset register		OFSET:0x10
+	volatile uint32_t BRR;				//Port bit reset register			OFSET:0x14
+	volatile uint32_t LCKR;				//Port configuration lock register	OFSET:0x18
 
 }GPIO_RegDef_t;
 
 typedef struct
 {
-	volatile int32_t CR;			//Clock control register				OFSET:0x00
-	volatile int32_t CFGR;			//Clock configuration register			OFSET:0x04
-	volatile int32_t CIR;			//Clock interrupt register				OFSET:0x08
-	volatile int32_t APB2RSTR;		//APB2 peripheral reset register		OFSET:0x0C
-	volatile int32_t APB1RSTR;		//APB1 peripheral reset register		OFSET:0x10
-	volatile int32_t AHBENR;		//AHB peripheral clock enable register	OFSET:0x14
-	volatile int32_t APB2ENR;		//APB2 peripheral clock enable register	OFSET:0x18
-	volatile int32_t APB1ENR;		//APB1 peripheral clock enable register	OFSET:0x1C
-	volatile int32_t BDCR;			//Backup domain control register		OFSET:0x20
-	volatile int32_t CSR;			//Control/status register				OFSET:0x24
+	volatile uint32_t CR;			//Clock control register				OFSET:0x00
+	volatile uint32_t CFGR;			//Clock configuration register			OFSET:0x04
+	volatile uint32_t CIR;			//Clock interrupt register				OFSET:0x08
+	volatile uint32_t APB2RSTR;		//APB2 peripheral reset register		OFSET:0x0C
+	volatile uint32_t APB1RSTR;		//APB1 peripheral reset register		OFSET:0x10
+	volatile uint32_t AHBENR;		//AHB peripheral clock enable register	OFSET:0x14
+	volatile uint32_t APB2ENR;		//APB2 peripheral clock enable register	OFSET:0x18
+	volatile uint32_t APB1ENR;		//APB1 peripheral clock enable register	OFSET:0x1C
+	volatile uint32_t BDCR;			//Backup domain control register		OFSET:0x20
+	volatile uint32_t CSR;			//Control/status register				OFSET:0x24
 }RCC_RegDef_t;
 
 
@@ -195,7 +195,28 @@ typedef struct
 #define I2C2_CLK_DISABLE()			RCC->APB1ENR &= ~( 1 << 22 )
 
 
+/*
+ * * * PERIPHERALS RESET REGISTER macros
+ */
+
+#define GPIOA_REG_RESET()			do{(RCC->APB2RSTR |= ( 1 << 2 )); (RCC->APB2RSTR |= ( 1 << 2 ));} while(0)
+#define GPIOB_REG_RESET()			do{(RCC->APB2RSTR |= ( 1 << 3 )); (RCC->APB2RSTR |= ( 1 << 3 ));} while(0)
+#define GPIOC_REG_RESET()			do{(RCC->APB2RSTR |= ( 1 << 4 )); (RCC->APB2RSTR |= ( 1 << 4 ));} while(0)
+#define GPIOD_REG_RESET()			do{(RCC->APB2RSTR |= ( 1 << 5 )); (RCC->APB2RSTR |= ( 1 << 5 ));} while(0)
+#define GPIOE_REG_RESET()			do{(RCC->APB2RSTR |= ( 1 << 6 )); (RCC->APB2RSTR |= ( 1 << 6 ));} while(0)
+#define GPIOF_REG_RESET()			do{(RCC->APB2RSTR |= ( 1 << 7 )); (RCC->APB2RSTR |= ( 1 << 7 ));} while(0)
+#define GPIOG_REG_RESET()			do{(RCC->APB2RSTR |= ( 1 << 8 )); (RCC->APB2RSTR |= ( 1 << 8 ));} while(0)
 
 
+
+/*
+ * Generic macros
+ */
+#define ENABLE 			1
+#define DISABLE			0
+#define SET				ENABLE
+#define RESET 			DISABLE
+#define GPIO_PIN_SET	SET
+#define GPIO_PIN_RESET	RESET
 
 #endif /* INC_STM32F103XX_H_ */
