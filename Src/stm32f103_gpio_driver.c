@@ -273,7 +273,7 @@ void GPIO_WitePin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber, uint8_t Value)
  * @note			- none
  *********************************************************/
 
-void GPIO_WritePort(GPIO_RegDef_t *pGPIOx, uint8_t Value)
+void GPIO_WritePort(GPIO_RegDef_t *pGPIOx, uint16_t Value)
 {
 	pGPIOx->ODR = Value;
 }

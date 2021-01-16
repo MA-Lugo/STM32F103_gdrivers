@@ -124,7 +124,7 @@ uint16_t GPIO_ReadPort(GPIO_RegDef_t *GPIOx);
  * Pheriperal WRITE
  */
 void GPIO_WitePin(GPIO_RegDef_t *GPIOx, uint8_t PinNumber, uint8_t Value);
-void GPIO_WritePort(GPIO_RegDef_t *GPIOx, uint8_t Value);
+void GPIO_WritePort(GPIO_RegDef_t *GPIOx, uint16_t Value);
 void GPIO_TogglePin(GPIO_RegDef_t *GPIOx, uint8_t PinNumber);
 
 /*
