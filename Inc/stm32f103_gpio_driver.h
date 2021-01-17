@@ -109,8 +109,8 @@ typedef struct
  */
 void GPIO_CLK_Control(GPIO_RegDef_t *GPIOx, uint8_t EnOrDi);
 
-void GPIO_Pin_Init(GPIO_Handle_t *pGPIOHandle);
-void GPIO_Pin_DeInit(GPIO_RegDef_t *GPIOx);
+void GPIO_InitPin(GPIO_Handle_t *pGPIOHandle);
+void GPIO_DeInitPort(GPIO_RegDef_t *GPIOx);
 
 void GPIO_SetPull_UorD(GPIO_Handle_t *pGPIOHandle);
 

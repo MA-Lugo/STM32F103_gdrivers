@@ -111,7 +111,7 @@ void GPIO_CLK_Control(GPIO_RegDef_t *pGPIOx, uint8_t EnOrDi)
  * @note			- none
  *********************************************************/
 
-void GPIO_Pin_Init(GPIO_Handle_t *pGPIOHandle)
+void GPIO_InitPin(GPIO_Handle_t *pGPIOHandle)
 {
 	uint32_t temp = 0; // temporal register
 
@@ -140,7 +140,7 @@ void GPIO_Pin_Init(GPIO_Handle_t *pGPIOHandle)
  *
  * @note			- none
  *********************************************************/
-void GPIO_Pin_DeInit(GPIO_RegDef_t *pGPIOx)
+void GPIO_DeInitPort(GPIO_RegDef_t *pGPIOx)
 {
 	if (pGPIOx == GPIOA)
 	{
