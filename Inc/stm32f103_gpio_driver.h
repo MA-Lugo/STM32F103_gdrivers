@@ -110,6 +110,7 @@ typedef struct
 void GPIO_CLK_Control(GPIO_RegDef_t *GPIOx, uint8_t EnOrDi);
 
 void GPIO_InitPin(GPIO_Handle_t *pGPIOHandle);
+void GPIO_InitPort(GPIO_RegDef_t *pGPIOx, uint8_t GPIO_MODE);
 void GPIO_DeInitPort(GPIO_RegDef_t *GPIOx);
 
 void GPIO_SetPull_UorD(GPIO_Handle_t *pGPIOHandle);

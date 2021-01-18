@@ -102,7 +102,7 @@ void GPIO_CLK_Control(GPIO_RegDef_t *pGPIOx, uint8_t EnOrDi)
 
 /**********************************************************
  * @fn				- GPIO_InitPin
- * @brief			- This function initialize the given GPIO port
+ * @brief			- This function initialize the given GPIO Port PIN
  *
  * @param[in]		- GPIO handle structure
  *
@@ -130,11 +130,44 @@ void GPIO_InitPin(GPIO_Handle_t *pGPIOHandle)
 	}
 }
 
+
+/**********************************************************
+ * @fn				- GPIO_InitPort
+ * @brief			- This function initialize all Pins
+ * 					  of the given GPIO port
+ *
+ * @param[in]		- Base addres of the GPIO port
+ * @param[in]		- GPIO MODE macro
+ *
+ * @return			- none
+ *
+ * @note			- none
+ *********************************************************/
+
+void GPIO_InitPort(GPIO_RegDef_t *pGPIOx, uint8_t GPIO_MODE)
+{
+	uint32_t temp = 0; // temporal register
+
+	for (uint8_t q = 0; q <= 28 ; q+=4)
+	{
+		temp |= (GPIO_MODE  << q);
+	}
+
+	pGPIOx->CRL = 0;			//clear
+	pGPIOx->CRH = 0;
+
+	pGPIOx->CRL = temp;			//set
+	pGPIOx->CRH = temp;
+
+}
+
+
+
 /**********************************************************
  * @fn				- GPIO_DeInitPort
  * @brief			- This function de-initialize the given GPIO port
  *
- * @param[in]		- GPIO handle structure
+ * @param[in]		- Base addres of the GPIO port
  *
  * @return			- none
  *
