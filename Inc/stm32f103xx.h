@@ -11,6 +11,36 @@
 #define INC_STM32F103XX_H_
 
 /*
+ * ARM Cortex M3 NVIC ISERx register Addresses
+ */
+
+#define NVIC_ISER0				( (volatile uint32_t*)0xE000E100 )
+#define NVIC_ISER1				( (volatile uint32_t*)0xE000E104 )
+#define NVIC_ISER2				( (volatile uint32_t*)0xE000E108 )
+#define NVIC_ISER3				( (volatile uint32_t*)0xE000E10C )
+#define NVIC_ISER4				( (volatile uint32_t*)0xE000E110 )
+#define NVIC_ISER5				( (volatile uint32_t*)0xE000E114 )
+#define NVIC_ISER6				( (volatile uint32_t*)0xE000E118 )
+#define NVIC_ISER7				( (volatile uint32_t*)0xE000E11C )
+
+/*
+ * ARM Cortex M3 NVIC ICERx register Addresses
+ */
+
+#define NVIC_ICER0				( (volatile uint32_t*)0xE000E180 )
+#define NVIC_ICER1				( (volatile uint32_t*)0xE000E184 )
+#define NVIC_ICER2				( (volatile uint32_t*)0xE000E188 )
+#define NVIC_ICER3				( (volatile uint32_t*)0xE000E18C )
+#define NVIC_ICER4				( (volatile uint32_t*)0xE000E190 )
+#define NVIC_ICER5				( (volatile uint32_t*)0xE000E194 )
+#define NVIC_ICER6				( (volatile uint32_t*)0xE000E198 )
+#define NVIC_ICER7				( (volatile uint32_t*)0xE000E19C )
+
+
+#define NVIC_PR_BASEADDR 		( (volatile uint32_t*)0xE000E400 )
+
+#define NO_PR_BITS_IMPLEMENT		4
+/*
  * base address of the Flash and SRAM memories
  */
 #define FLASH_BASEADDR				0x08000000U
@@ -120,6 +150,26 @@ typedef struct
 	volatile uint32_t CSR;			//Control/status register				OFSET:0x24
 }RCC_RegDef_t;
 
+typedef struct
+{
+	volatile uint32_t IMR;			//Interrupt mask register				OFSET:0x00
+	volatile uint32_t EMR;			//Event mask register					OFSET:0x04
+	volatile uint32_t RTSR;			//Rising trigger selection register		OFSET:0x08
+	volatile uint32_t FTSR;			//Falling trigger selection register	OFSET:0x0C
+	volatile uint32_t SWIER;		//Software interrupt event register		OFSET:0x10
+	volatile uint32_t PR;			//Pending register	OFSET:0x14
+}EXTI_RegDef_t;
+
+typedef struct
+{
+	volatile uint32_t EVCR;			//Event control register							OFSET:0x00
+	volatile uint32_t MAPR;			//AF remap and debug I/O configuration register		OFSET:0x04
+	volatile uint32_t EXTICR[4];	//External interrupt configuration register 1-4		OFSET:0x08
+	volatile uint32_t RESERVED;		//External interrupt configuration register 4		OFSET:0x18
+	volatile uint32_t MAPR2;		//AF remap and debug I/O configuration register2	OFSET:0x1C
+
+}AFIO_RegDef_t;
+
 
 
 /*
@@ -135,8 +185,9 @@ typedef struct
 #define GPIOG						((GPIO_RegDef_t*)GPIOG_BASEADDR)
 
 #define RCC							((RCC_RegDef_t*)RCC_BASEADDR)
+#define EXTI						((EXTI_RegDef_t*)EXTI_BASEADDR)
 
-
+#define AFIO						((AFIO_RegDef_t*)AFIO_BASEADDR)
 /*
  * * * CLOCK ENABLE MACROS
  */
@@ -149,6 +200,9 @@ typedef struct
 #define GPIOE_CLK_ENABLE()			RCC->APB2ENR |= ( 1 << 6 )
 #define GPIOF_CLK_ENABLE()			RCC->APB2ENR |= ( 1 << 7 )
 #define GPIOG_CLK_ENABLE()			RCC->APB2ENR |= ( 1 << 8 )
+
+//AFIO
+#define AFIO_CLK_ENABLE()			RCC->APB2ENR |= ( 1 << 0 )
 
 //USART & UART
 #define USART1_CLK_ENABLE()			RCC->APB2ENR |= ( 1 << 14 )
@@ -208,6 +262,15 @@ typedef struct
 #define GPIOG_REG_RESET()			do{(RCC->APB2RSTR |= ( 1 << 8 )); (RCC->APB2RSTR |= ( 1 << 8 ));} while(0)
 
 
+
+
+#define GPIO_BASEADDR_TO_CODE(x)	  (	(x == GPIOA) ? 0:\
+										(x == GPIOB) ? 1:\
+										(x == GPIOC) ? 2:\
+										(x == GPIOD) ? 3:\
+										(x == GPIOE) ? 4:\
+										(x == GPIOF) ? 5:\
+										(x == GPIOG) ? 6:0  )
 
 /*
  * Generic macros

@@ -71,18 +71,13 @@ typedef struct
 
 
 /*
-#define GPIO_MODE_INT_FT
-#define GPIO_MODE_INT_RT
-#define GPIO_MODE_INT_FRT
-*/
-
-
-/*
- * @GPIO PIN INTERRUPT
- * Gpio pin interrup
+ * @GPIO PIN MODES
+ * Gpio pin interrup modes
  */
 
-
+#define GPIO_INT_TYPE_FT				0x0U
+#define GPIO_INT_TYPE_RT				0x1U
+#define GPIO_INT_TYPE_FRT				0x3U
 
 
 
@@ -92,7 +87,7 @@ typedef struct
 
 typedef struct
 {
-	GPIO_RegDef_t 		*pGPIOx;		/*!<Holds the base address of the GPIO port to wich the pin belongs >*/
+	GPIO_RegDef_t 		*pGPIOx;		/*!<Holds the base address of the GPIO port to wich the pin belongs (GPIOx)>*/
 	GPIO_PinConfig_t	GPIO_PinConfig; /*!<Holds GPIO pin configuration settings >*/
 }GPIO_Handle_t;
 
@@ -115,6 +110,8 @@ void GPIO_DeInitPort(GPIO_RegDef_t *GPIOx);
 
 void GPIO_SetPull_UorD(GPIO_Handle_t *pGPIOHandle);
 
+void GPIO_INT_Config(GPIO_RegDef_t *pGPIOx, uint8_t GPIO_PinNumber, uint8_t GPIO_INT_TYPE);
+
 /*
  * Pheriperal READ
  */
@@ -131,5 +128,13 @@ void GPIO_TogglePin(GPIO_RegDef_t *GPIOx, uint8_t PinNumber);
 /*
  * IRQ configuration and ISR handle
  */
+
+void GPIO_IRQInterrupt_Config(uint8_t IRQNumber, uint8_t EnorDi);
+void GPIO_IRQPiority_Config(uint8_t IRQNumber, uint32_t IRQPriority);
+
+void GPIO_IRQHandling(uint8_t GPIO_PinNumber);
+
+
+
 
 #endif /* INC_STM32F103_GPIO_DRIVER_H_ */
