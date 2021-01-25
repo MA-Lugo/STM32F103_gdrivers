@@ -102,11 +102,11 @@ typedef struct
 /*
  * Pheriperal SETUP
  */
-void GPIO_CLK_Control(GPIO_RegDef_t *GPIOx, uint8_t EnOrDi);
+void GPIO_CLK_Control(GPIO_RegDef_t *pGPIOx, uint8_t EnOrDi);
 
 void GPIO_InitPin(GPIO_Handle_t *pGPIOHandle);
 void GPIO_InitPort(GPIO_RegDef_t *pGPIOx, uint8_t GPIO_MODE);
-void GPIO_DeInitPort(GPIO_RegDef_t *GPIOx);
+void GPIO_DeInitPort(GPIO_RegDef_t *pGPIOx);
 
 void GPIO_SetPull_UorD(GPIO_Handle_t *pGPIOHandle);
 
@@ -115,15 +115,15 @@ void GPIO_INT_Config(GPIO_RegDef_t *pGPIOx, uint8_t GPIO_PinNumber, uint8_t GPIO
 /*
  * Pheriperal READ
  */
-uint8_t  GPIO_ReadPin(GPIO_RegDef_t *GPIOx, uint8_t PinNumber);
-uint16_t GPIO_ReadPort(GPIO_RegDef_t *GPIOx);
+uint8_t  GPIO_ReadPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber);
+uint16_t GPIO_ReadPort(GPIO_RegDef_t *pGPIOx);
 
 /*
  * Pheriperal WRITE
  */
-void GPIO_WitePin(GPIO_RegDef_t *GPIOx, uint8_t PinNumber, uint8_t Value);
-void GPIO_WritePort(GPIO_RegDef_t *GPIOx, uint16_t Value);
-void GPIO_TogglePin(GPIO_RegDef_t *GPIOx, uint8_t PinNumber);
+void GPIO_WitePin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber, uint8_t Value);
+void GPIO_WritePort(GPIO_RegDef_t *pGPIOx, uint16_t Value);
+void GPIO_TogglePin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber);
 
 /*
  * IRQ configuration and ISR handle
