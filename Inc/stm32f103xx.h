@@ -170,6 +170,21 @@ typedef struct
 
 }AFIO_RegDef_t;
 
+typedef struct
+{
+	volatile uint32_t CR1;			//SPI control register 1							OFSET:0x00
+	volatile uint32_t CR2;			//SPI control register 2							OFSET:0x04
+	volatile uint32_t SR;			//SPI status register								OFSET:0x08
+	volatile uint32_t DR;			//SPI data register									OFSET:0x0C
+	volatile uint32_t CRCPR;		//SPI CRC polynomial register						OFSET:0x10
+	volatile uint32_t RXCRCR;		//SPI RX CRC register								OFSET:0x14
+	volatile uint32_t TXCRCR;		//SPI TX CRC register								OFSET:0x18
+	volatile uint32_t I2SCFGR;		//SPI_I2S configuration register					OFSET:0x1C
+	volatile uint32_t I2SPR;		//SPI_I2S prescaler register						OFSET:0x20
+
+
+}SPI_RegDef_t;
+
 
 
 /*
@@ -183,6 +198,11 @@ typedef struct
 #define GPIOE						((GPIO_RegDef_t*)GPIOE_BASEADDR)
 #define GPIOF						((GPIO_RegDef_t*)GPIOF_BASEADDR)
 #define GPIOG						((GPIO_RegDef_t*)GPIOG_BASEADDR)
+
+#define SPI1						((SPI_RegDef_t*)SPI1_BASEADDR)
+#define SPI2						((SPI_RegDef_t*)SPI2_BASEADDR)
+#define SPI3						((SPI_RegDef_t*)SPI3_BASEADDR)
+
 
 #define RCC							((RCC_RegDef_t*)RCC_BASEADDR)
 #define EXTI						((EXTI_RegDef_t*)EXTI_BASEADDR)
@@ -253,14 +273,18 @@ typedef struct
  * * * PERIPHERALS RESET REGISTER macros
  */
 
-#define GPIOA_REG_RESET()			do{(RCC->APB2RSTR |= ( 1 << 2 )); (RCC->APB2RSTR |= ( 1 << 2 ));} while(0)
-#define GPIOB_REG_RESET()			do{(RCC->APB2RSTR |= ( 1 << 3 )); (RCC->APB2RSTR |= ( 1 << 3 ));} while(0)
-#define GPIOC_REG_RESET()			do{(RCC->APB2RSTR |= ( 1 << 4 )); (RCC->APB2RSTR |= ( 1 << 4 ));} while(0)
-#define GPIOD_REG_RESET()			do{(RCC->APB2RSTR |= ( 1 << 5 )); (RCC->APB2RSTR |= ( 1 << 5 ));} while(0)
-#define GPIOE_REG_RESET()			do{(RCC->APB2RSTR |= ( 1 << 6 )); (RCC->APB2RSTR |= ( 1 << 6 ));} while(0)
-#define GPIOF_REG_RESET()			do{(RCC->APB2RSTR |= ( 1 << 7 )); (RCC->APB2RSTR |= ( 1 << 7 ));} while(0)
-#define GPIOG_REG_RESET()			do{(RCC->APB2RSTR |= ( 1 << 8 )); (RCC->APB2RSTR |= ( 1 << 8 ));} while(0)
+#define GPIOA_REG_RESET()			do{(RCC->APB2RSTR |= ( 1 << 2 )); (RCC->APB2RSTR &= ~( 1 << 2 ));} while(0)
+#define GPIOB_REG_RESET()			do{(RCC->APB2RSTR |= ( 1 << 3 )); (RCC->APB2RSTR &= ~( 1 << 3 ));} while(0)
+#define GPIOC_REG_RESET()			do{(RCC->APB2RSTR |= ( 1 << 4 )); (RCC->APB2RSTR &= ~( 1 << 4 ));} while(0)
+#define GPIOD_REG_RESET()			do{(RCC->APB2RSTR |= ( 1 << 5 )); (RCC->APB2RSTR &= ~( 1 << 5 ));} while(0)
+#define GPIOE_REG_RESET()			do{(RCC->APB2RSTR |= ( 1 << 6 )); (RCC->APB2RSTR &= ~( 1 << 6 ));} while(0)
+#define GPIOF_REG_RESET()			do{(RCC->APB2RSTR |= ( 1 << 7 )); (RCC->APB2RSTR &= ~( 1 << 7 ));} while(0)
+#define GPIOG_REG_RESET()			do{(RCC->APB2RSTR |= ( 1 << 8 )); (RCC->APB2RSTR &= ~( 1 << 8 ));} while(0)
 
+
+#define SPI1_REG_RESET()			do{(RCC->APB2RSTR |= ( 1 << 12 )); (RCC->APB2RSTR &= ~( 1 << 12 ));} while(0)
+#define SPI2_REG_RESET()			do{(RCC->APB1RSTR |= ( 1 << 14 )); (RCC->APB1RSTR &= ~( 1 << 14 ));} while(0)
+#define SPI3_REG_RESET()			do{(RCC->APB1RSTR |= ( 1 << 15 )); (RCC->APB1RSTR &= ~( 1 << 15 ));} while(0)
 
 
 
