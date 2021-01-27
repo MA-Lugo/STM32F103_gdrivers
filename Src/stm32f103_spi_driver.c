@@ -142,10 +142,47 @@ void SPI_DeInit(SPI_RegDef_t *pSPIx)
 
 }
 
-
+/**********************************************************
+ * @fn				- SPI_SendData
+ * @brief			- This function send data from the
+ * 					  given SPI port
+ *
+ *
+ * @param[in]		- Base addres of the SPIx
+ * @param[in]		- user Tx buffer pointer
+ * @param[in]		- length of data (number of bytes)
+ *
+ * @return			- none
+ *
+ * @note			- This is blocking call
+ *********************************************************/
 
 void SPI_SendData(SPI_RegDef_t *pSPIx, uint8_t *pTxBuffer, uint32_t Len)
 {
+	while(Len > 0)
+	{
+		//1. wait until TX is set (Tx reg buff empty)
+		while( !(pSPIx->CR2 & (1 << SPI_SR_TXE)) );
+
+		//2. check the DFF bit
+		if( (pSPIx->CR1 & (1 << SPI_CR1_DFF)) )
+		{
+			//16 bit DFF
+			//1. load the data in to the DR
+			pSPIx->DR = *((uint16_t*)pTxBuffer);
+			Len -=2;
+			(uint16_t*) pTxBuffer ++;
+		}
+		else
+		{
+			//8 bit DFF
+			//1. load the data in to the DR
+			pSPIx->DR = *(pTxBuffer);
+			Len --;
+			pTxBuffer ++;
+		}
+
+	}
 }
 void SPI_ReceiveDAta(SPI_RegDef_t *pSPIx,uint8_t *pRxBuffer, uint32_t Len)
 {
