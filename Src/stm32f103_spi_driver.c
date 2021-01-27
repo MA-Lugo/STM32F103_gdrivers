@@ -57,9 +57,58 @@ void SPI_CLK_Control(SPI_RegDef_t *pSPIx, uint8_t EnOrDi)
 
 }
 
+/**********************************************************
+ * @fn				- SPI_Init
+ * @brief			- This function initialize the given
+ * 					  spi port
+ *
+ * @param[in]		- SPI handle structure
+ *
+ * @return			- none
+ *
+ * @note			- none
+ *********************************************************/
+
 void SPI_Init(SPI_Handle_t *pSPIHandle)
 {
+	uint32_t temp_reg = 0;
 
+	//1. Configure the devie mode
+	temp_reg |= pSPIHandle->SPIConfig.SPI_DeviceMode << SPI_CR1_MSTR;
+
+	//2. Configure the bus config
+	if(pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONF_FD)
+	{
+		temp_reg &= ~(1 << SPI_CR1_BIDIMODE);
+	}
+	else if(pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONF_HD)
+	{
+		temp_reg |= (1 << SPI_CR1_BIDIMODE);
+	}
+	if(pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONF_SIMPLEX_RxONLY)
+	{
+		temp_reg &= ~(1 << SPI_CR1_BIDIMODE);
+		temp_reg |= (1 << SPI_CR1_RXONLY);
+	}
+
+	//3. Configure the spi serial clock speed
+	temp_reg |= (pSPIHandle->SPIConfig.SPI_CLKSpeed << SPI_CR1_BR);
+
+	//4 Configure the DFF
+	temp_reg |= (pSPIHandle->SPIConfig.SPI_DFF << SPI_CR1_DFF);
+
+	//5. Configure the CPOL
+	temp_reg |= (pSPIHandle->SPIConfig.SPI_CPOL << SPI_CR1_CPOL);
+
+	//6. Configure the CPHA
+	temp_reg |= (pSPIHandle->SPIConfig.SPI_CPHA << SPI_CR1_CPHA);
+
+	//7. Configure the SSM
+	temp_reg |= (pSPIHandle->SPIConfig.SPI_SSM << SPI_CR1_SSM);
+
+
+
+	pSPIHandle->pSPIx->CR1 = temp_reg;
 }
 
 
