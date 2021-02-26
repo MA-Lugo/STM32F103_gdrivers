@@ -85,7 +85,7 @@ void SPI_Init(SPI_Handle_t *pSPIHandle)
 	{
 		temp_reg |= (1 << SPI_CR1_BIDIMODE);
 	}
-	if(pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONF_SIMPLEX_RxONLY)
+	else if(pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONF_SIMPLEX_RxONLY)
 	{
 		temp_reg &= ~(1 << SPI_CR1_BIDIMODE);
 		temp_reg |= (1 << SPI_CR1_RXONLY);
