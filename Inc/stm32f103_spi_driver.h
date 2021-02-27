@@ -92,7 +92,7 @@ typedef struct
  */
 
 #define SPI_SSM_DISABLE						0
-#define SPI_SMM_ENABLE						1
+#define SPI_SSM_ENABLE						1
 
 
 /****************************************************************************************************************
