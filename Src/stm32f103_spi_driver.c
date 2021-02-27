@@ -214,6 +214,30 @@ void SPI_ReceiveDAta(SPI_RegDef_t *pSPIx,uint8_t *pRxBuffer, uint32_t Len)
 }
 
 
+/**********************************************************
+ * @fn				- SPI_SSIConfig
+ * @brief			- This function enable or disbale
+ * 					  the Internal slave select (SSI) bit
+ *
+ *
+ * @param[in]		- Base addres of the SPIx
+ * @param[in]		- ENABLE or DISABLE macros
+ *
+ * @return			- none
+ *
+ * @note			-
+ *********************************************************/
+void SPI_SSIConfig(SPI_RegDef_t *pSPIx, uint8_t EnOrDis)
+{
+	if(EnOrDis == ENABLE)
+	{
+		pSPIx->CR1 |= (1 << 8);
+	}
+	else
+	{
+		pSPIx->CR1 &= ~(1 << 8);
+	}
+}
 
 void SPI_IRQInterrupt_Config(uint8_t IRQNumber, uint8_t EnorDi)
 {
