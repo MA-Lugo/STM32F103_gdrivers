@@ -186,7 +186,7 @@ void SPI_SendData(SPI_RegDef_t *pSPIx, uint8_t *pTxBuffer, uint32_t Len)
 	while(Len > 0)
 	{
 		//1. wait until TX is set (Tx reg buff empty)
-		while( !(pSPIx->CR2 & (1 << SPI_SR_TXE)) );
+		while( !(pSPIx->SR & (1 << SPI_SR_TXE)) );
 
 		//2. check the DFF bit
 		if( (pSPIx->CR1 & (1 << SPI_CR1_DFF)) )
