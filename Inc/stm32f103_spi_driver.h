@@ -108,6 +108,7 @@ void SPI_CLK_Control(SPI_RegDef_t *pSPIx, uint8_t EnOrDi);
 void SPI_Init(SPI_Handle_t *pSPIHandle);
 void SPI_DeInit(SPI_RegDef_t *pSPIx);
 
+void SPI_PeripheralControl(SPI_RegDef_t *pSPIx, uint8_t EnOrDis);
 
 /*
  * Send and Receive Data

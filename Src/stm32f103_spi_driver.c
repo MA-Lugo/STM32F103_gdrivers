@@ -143,6 +143,30 @@ void SPI_DeInit(SPI_RegDef_t *pSPIx)
 }
 
 /**********************************************************
+ * @fn				- SPI_PeripheralControl
+ * @brief			- This function enable or disable the peripheral
+ *
+ *
+ * @param[in]		- Base addres of the SPIx
+ * @param[in]		- ENABLE or DISABLE macros
+ *
+ * @return			- none
+ *
+ * @note			-
+ *********************************************************/
+void SPI_PeripheralControl(SPI_RegDef_t *pSPIx, uint8_t EnOrDis)
+{
+	if(EnOrDis == ENABLE)
+	{
+		pSPIx->CR1 |= (1 << 6);
+	}
+	else
+	{
+		pSPIx->CR1 &= ~(1 << 6);
+	}
+}
+
+/**********************************************************
  * @fn				- SPI_SendData
  * @brief			- This function send data from the
  * 					  given SPI port
