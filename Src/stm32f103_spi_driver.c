@@ -207,6 +207,7 @@ void SPI_SendData(SPI_RegDef_t *pSPIx, uint8_t *pTxBuffer, uint32_t Len)
 		}
 
 	}
+	while( pSPIx->SR & (1 << SPI_SR_BSY) );
 }
 void SPI_ReceiveDAta(SPI_RegDef_t *pSPIx,uint8_t *pRxBuffer, uint32_t Len)
 {
