@@ -122,6 +122,7 @@ void SPI_ReceiveDAta(SPI_RegDef_t *pSPIx,uint8_t *pRxBuffer, uint32_t Len);
  */
 
 void SPI_SSIConfig(SPI_RegDef_t *pSPIx, uint8_t EnOrDis);
+void SPI_SSOEConfig(SPI_RegDef_t *pSPIx, uint8_t EnOrDis);
 
 /*
  * IRQ configuration and ISR handling

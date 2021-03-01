@@ -239,6 +239,30 @@ void SPI_SSIConfig(SPI_RegDef_t *pSPIx, uint8_t EnOrDis)
 	}
 }
 
+/**********************************************************
+ * @fn				- SPI_SSOEConfig
+ * @brief			- This function enable or disbale
+ * 					  the SS output enable (SSOE) bit
+ *
+ *
+ * @param[in]		- Base addres of the SPIx
+ * @param[in]		- ENABLE or DISABLE macros
+ *
+ * @return			- none
+ *
+ * @note			-
+ *********************************************************/
+void SPI_SSOEConfig(SPI_RegDef_t *pSPIx, uint8_t EnOrDis)
+{
+	if(EnOrDis == ENABLE)
+	{
+		pSPIx->CR2 |= (1 << 2);
+	}
+	else
+	{
+		pSPIx->CR2 &= ~(1 << 2);
+	}
+}
 void SPI_IRQInterrupt_Config(uint8_t IRQNumber, uint8_t EnorDi)
 {
 
