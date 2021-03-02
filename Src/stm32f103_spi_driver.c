@@ -209,9 +209,49 @@ void SPI_SendData(SPI_RegDef_t *pSPIx, uint8_t *pTxBuffer, uint32_t Len)
 	}
 	while( pSPIx->SR & (1 << SPI_SR_BSY) );
 }
-void SPI_ReceiveDAta(SPI_RegDef_t *pSPIx,uint8_t *pRxBuffer, uint32_t Len)
-{
 
+/**********************************************************
+ * @fn				- SPI_ReceiveData
+ * @brief			- This function receive data from the
+ * 					  given SPI port
+ *
+ *
+ * @param[in]		- Base addres of the SPIx
+ * @param[in]		- user rx buffer pointer
+ * @param[in]		- length of data (number of bytes)
+ *
+ * @return			- none
+ *
+ * @note			- This is blocking call
+ *********************************************************/
+
+void SPI_ReceiveData(SPI_RegDef_t *pSPIx,uint8_t *pRxBuffer, uint32_t Len)
+{
+	while(Len > 0)
+	{
+		//1. wait until RXE is set (Rx reg buff NOempty)
+		while( !(pSPIx->SR & (1 << SPI_SR_RXNE)) );
+
+		//2. check the DFF bit
+		if( (pSPIx->CR1 & (1 << SPI_CR1_DFF)) )
+		{
+			//16 bit DFF
+			//1. load the data in to the pRxBuffer
+			*((uint16_t*)pRxBuffer) =  pSPIx->DR;
+			Len -=2;
+			(uint16_t*) pRxBuffer ++;
+		}
+		else
+		{
+			//8 bit DFF
+			//1. load the data in to the pRxBuffer
+			*pRxBuffer =  pSPIx->DR;
+			Len --;
+			pRxBuffer ++;
+		}
+
+	}
+	while( pSPIx->SR & (1 << SPI_SR_BSY) );
 }
 
 
