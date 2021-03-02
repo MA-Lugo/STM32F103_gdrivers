@@ -296,6 +296,26 @@ typedef struct
 										(x == GPIOF) ? 5:\
 										(x == GPIOG) ? 6:0  )
 
+
+
+/*
+ * IRQ (Interrupt Request) Numbers for STM32F103C8T6
+ */
+#define IRQ_NO_EXTI0				6
+#define IRQ_NO_EXTI1				7
+#define IRQ_NO_EXTI2				8
+#define IRQ_NO_EXTI3				9
+#define IRQ_NO_EXTI4				10
+#define IRQ_NO_EXTI9_5				23
+#define IRQ_NO_EXTI15_20			40
+
+#define IRQ_NO_SPI1					35
+#define IRQ_NO_SPI2					36
+#define IRQ_NO_SPI3					51
+
+
+
+
 /*
  * Generic macros
  */
