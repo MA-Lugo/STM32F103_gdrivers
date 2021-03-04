@@ -409,6 +409,38 @@ uint8_t SPI_SendData_IT(SPI_Handle_t *pSPIHandle, uint8_t *pTxBuffer, uint32_t L
 	return state;
 }
 
+/**********************************************************
+ * @fn				- SPI_ReceiveData_IT
+ * @brief			- This function receive data from the
+ * 						given SPI Handle with interrupts
+ *
+ * @param[in]		- SPI Handke structure
+ * @param[in]		- Rx Buffer pointer
+ * @param[in]		- Len
+ *
+ * @return			- none
+ *
+ * @note			- none
+ *********************************************************/
+uint8_t SPI_ReceiveData_IT(SPI_Handle_t *pSPIHandle, uint8_t *pRxBuffer, uint32_t Len)
+{
+	uint8_t state = pSPIHandle->RxState;
+
+	if (state != SPI_BUSY_IN_RX)
+	{
+
+		pSPIHandle->pRxBuffer = pRxBuffer;
+		pSPIHandle->RxLen = Len;
+
+		//Mark the spi busy in transmission
+		pSPIHandle->RxState = SPI_BUSY_IN_RX;
+
+		//Enable the TXEIE control bit to get interrupt whenever TXE flag is set in SR
+		pSPIHandle->pSPIx->CR2 |= (1 << SPI_CR2_RXNEIE);
+	}
+
+	return state;
+}
 void SPI_IRQHandling(SPI_Handle_t *pSPIHandle)
 {
 

@@ -150,5 +150,6 @@ void SPI_IRQHandling(SPI_Handle_t *pSPIHandle);
  * Send and Receive Data with Interrupts
  */
 uint8_t SPI_SendData_IT(SPI_Handle_t *pSPIHandle, uint8_t *pTxBuffer, uint32_t Len);
+uint8_t SPI_ReceiveData_IT(SPI_Handle_t *pSPIHandle, uint8_t *pTxBuffer, uint32_t Len);
 
 #endif /* INC_STM32F103_SPI_DRIVER_H_ */
