@@ -31,12 +31,25 @@ typedef struct
  */
 typedef struct
 {
-	SPI_RegDef_t *pSPIx;
+	SPI_RegDef_t 	*pSPIx;
 	SPI_PinConfig_t SPIConfig;
+
+	uint8_t			*pTxBuffer;
+	uint8_t			*pRxBuffer;
+	uint32_t		TxLen;
+	uint32_t		RxLen;
+	uint8_t			TxState;
+	uint8_t			RxState;
 
 }SPI_Handle_t;
 
 
+/*
+ * SPI Application States
+ */
+#define SPI_READY					0
+#define SPI_BUSY_IN_TX				1
+#define SPI_BUSY_IN_RX				2
 
 /*
  * Device Mode
@@ -133,6 +146,9 @@ void SPI_IRQPiority_Config(uint8_t IRQNumber, uint32_t IRQPriority);
 
 void SPI_IRQHandling(SPI_Handle_t *pSPIHandle);
 
-
+/*
+ * Send and Receive Data with Interrupts
+ */
+uint8_t SPI_SendData_IT(SPI_Handle_t *pSPIHandle, uint8_t *pTxBuffer, uint32_t Len);
 
 #endif /* INC_STM32F103_SPI_DRIVER_H_ */

@@ -376,6 +376,39 @@ void SPI_IRQPiority_Config(uint8_t IRQNumber, uint32_t IRQPriority)
 
 }
 
+/**********************************************************
+ * @fn				- SPI_SendData_IT
+ * @brief			- This function send data from the
+ * 						given SPI Handle with interrupts
+ *
+ * @param[in]		- SPI Handke structure
+ * @param[in]		- Tx Buffer pointer
+ * @param[in]		- Len
+ *
+ * @return			- none
+ *
+ * @note			- none
+ *********************************************************/
+uint8_t SPI_SendData_IT(SPI_Handle_t *pSPIHandle, uint8_t *pTxBuffer, uint32_t Len)
+{
+	uint8_t state = pSPIHandle->TxState;
+
+	if (state != SPI_BUSY_IN_RX)
+	{
+
+		pSPIHandle->pTxBuffer = pTxBuffer;
+		pSPIHandle->TxLen = Len;
+
+		//Mark the spi busy in transmission
+		pSPIHandle->TxState = SPI_BUSY_IN_TX;
+
+		//Enable the TXEIE control bit to get interrupt whenever TXE flag is set in SR
+		pSPIHandle->pSPIx->CR2 |= (1 << SPI_CR2_TXEIE);
+	}
+
+	return state;
+}
+
 void SPI_IRQHandling(SPI_Handle_t *pSPIHandle)
 {
 
