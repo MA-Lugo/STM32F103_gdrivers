@@ -6,6 +6,10 @@
  */
 #include "stm32f103_spi_driver.h"
 
+static void spi_txe_interrupt_handle(SPI_Handle_t *pSPIHandle);
+static void spi_rxne_interrupt_handle(SPI_Handle_t *pSPIHandle);
+static void spi_overrun_interrupt_handle(SPI_Handle_t *pSPIHandle);
+
 /**********************************************************
  * @fn				- SPI_CLK_Control
  * @brief			- This function enable or disable the peripheral clock
@@ -393,7 +397,7 @@ uint8_t SPI_SendData_IT(SPI_Handle_t *pSPIHandle, uint8_t *pTxBuffer, uint32_t L
 {
 	uint8_t state = pSPIHandle->TxState;
 
-	if (state != SPI_BUSY_IN_RX)
+	if (state != SPI_BUSY_IN_TX)
 	{
 
 		pSPIHandle->pTxBuffer = pTxBuffer;
@@ -441,8 +445,148 @@ uint8_t SPI_ReceiveData_IT(SPI_Handle_t *pSPIHandle, uint8_t *pRxBuffer, uint32_
 
 	return state;
 }
+
+
+/**********************************************************
+ * @fn				- SPI_IRQHandling
+ * @brief			- This function handle the possible
+ * 					  interrupts
+ *
+ * @param[in]		- SPI Handle structure
+ *
+ * @return			- none
+ *
+ * @note			- none
+ *********************************************************/
 void SPI_IRQHandling(SPI_Handle_t *pSPIHandle)
 {
+	uint8_t temp1, temp2;
+	//Check for TXE
+	temp1 = pSPIHandle->pSPIx->SR & (1 << SPI_SR_TXE);
+	temp2 = pSPIHandle->pSPIx->CR2 & (1 << SPI_CR2_TXEIE);
 
+	if (temp1 && temp2)
+	{
+		//Handle TXE
+		spi_txe_interrupt_handle(pSPIHandle);
+	}
+
+
+	//Check for RXNE
+	temp1 = pSPIHandle->pSPIx->SR & (1 << SPI_SR_RXNE);
+	temp2 = pSPIHandle->pSPIx->CR2 & (1 << SPI_CR2_RXNEIE);
+
+	if (temp1 && temp2)
+	{
+		//Handle RXNE
+		spi_rxne_interrupt_handle(pSPIHandle);
+	}
+
+	//Check for OVR
+	temp1 = pSPIHandle->pSPIx->SR & (1 << SPI_SR_OVR);
+	temp2 = pSPIHandle->pSPIx->CR2 & (1 << SPI_CR2_ERRIE);
+
+	if (temp1 && temp2)
+	{
+		//Handle OVR
+		spi_overrun_interrupt_handle(pSPIHandle);
+	}
+}
+
+//Helper functions implementations
+
+static void spi_txe_interrupt_handle(SPI_Handle_t *pSPIHandle)
+{
+
+	//2. check the DFF bit
+	if( (pSPIHandle->pSPIx->CR1 & (1 << SPI_CR1_DFF)) )
+	{
+		//16 bit DFF
+		//1. load the data in to the DR
+		pSPIHandle->pSPIx->DR = *((uint16_t*)pSPIHandle->pTxBuffer);
+		pSPIHandle->TxLen -=2;
+		(uint16_t*) pSPIHandle->pTxBuffer ++;
+	}
+	else
+	{
+		//8 bit DFF
+		//1. load the data in to the DR
+		pSPIHandle->pSPIx->DR = *pSPIHandle->pTxBuffer;
+		pSPIHandle->TxLen --;
+		pSPIHandle->pTxBuffer ++;
+	}
+
+	if(! pSPIHandle->TxLen)
+	{
+
+		//Prevent interrupts from setting up of the TXE Flag
+		SPI_Close_Transmission(pSPIHandle);
+
+		SPI_ApplicationEventCallback(pSPIHandle,SPI_EVENT_TX_CMPLT);
+	}
+
+
+}
+static void spi_rxne_interrupt_handle(SPI_Handle_t *pSPIHandle)
+{
+	//2. check the DFF bit
+	if( (pSPIHandle->pSPIx->CR1 & (1 << SPI_CR1_DFF)) )
+	{
+		//16 bit DFF
+		//1. load the data in to the pRxBuffer
+		*((uint16_t*)pSPIHandle->pRxBuffer) =  pSPIHandle->pSPIx->DR;
+		pSPIHandle->RxLen -=2;
+		(uint16_t*) pSPIHandle->pRxBuffer ++;
+	}
+	else
+	{
+		//8 bit DFF
+		//1. load the data in to the pRxBuffer
+		*pSPIHandle->pRxBuffer =  pSPIHandle->pSPIx->DR;
+		pSPIHandle->RxLen --;
+		pSPIHandle->pRxBuffer ++;
+	}
+
+	if(! pSPIHandle->RxLen)
+	{
+
+		//Prevent interrupts from setting up of the RXNE Flag
+		SPI_Close_Reception(pSPIHandle);
+
+		SPI_ApplicationEventCallback(pSPIHandle,SPI_EVENT_RX_CMPLT);
+	}
+}
+
+static void spi_overrun_interrupt_handle(SPI_Handle_t *pSPIHandle)
+{
+
+}
+
+void SPI_ClearOVRFlag(SPI_RegDef_t *pSPIx)
+{
+	uint8_t temp;
+	(void)temp;
+	temp = pSPIx->DR;
+	temp = pSPIx->SR;
+
+}
+void SPI_Close_Transmission(SPI_Handle_t *pSPIHandle)
+{
+	pSPIHandle->pSPIx->CR2 &= ~(1 << SPI_CR2_TXEIE);
+	pSPIHandle->pTxBuffer = NULL;
+	pSPIHandle->TxLen = 0;
+	pSPIHandle->TxState = SPI_READY;
+}
+void SPI_Close_Reception(SPI_Handle_t *pSPIHandle)
+{
+	pSPIHandle->pSPIx->CR2 &= ~(1 << SPI_CR2_RXNEIE);
+	pSPIHandle->pRxBuffer = NULL;
+	pSPIHandle->RxLen = 0;
+	pSPIHandle->RxState = SPI_READY;
+}
+
+__attribute__((weak)) void SPI_ApplicationEventCallback(SPI_Handle_t *pSPIHandle, uint8_t AppEV)
+{
+	//This is a weak implementation. the application may override this funtcion.
 }
 

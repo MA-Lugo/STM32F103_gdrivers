@@ -5,7 +5,7 @@
  *      Author: Mario
  */
 #include <stdint.h>
-
+#include <stddef.h>
 
 #ifndef INC_STM32F103XX_H_
 #define INC_STM32F103XX_H_

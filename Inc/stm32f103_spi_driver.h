@@ -52,6 +52,14 @@ typedef struct
 #define SPI_BUSY_IN_RX				2
 
 /*
+ * POSSIBLE SPI Applications evens
+ */
+
+#define SPI_EVENT_TX_CMPLT			1
+#define SPI_EVENT_RX_CMPLT			2
+#define SPI_EVENT_OVR_ERR			3
+
+/*
  * Device Mode
  */
 
@@ -136,6 +144,9 @@ void SPI_ReceiveData(SPI_RegDef_t *pSPIx,uint8_t *pRxBuffer, uint32_t Len);
 
 void SPI_SSIConfig(SPI_RegDef_t *pSPIx, uint8_t EnOrDis);
 void SPI_SSOEConfig(SPI_RegDef_t *pSPIx, uint8_t EnOrDis);
+void SPI_ClearOVRFlag(SPI_RegDef_t *pSPIx);
+void SPI_Close_Transmission(SPI_Handle_t *pSPIHandle);
+void SPI_Close_Reception(SPI_Handle_t *pSPIHandle);
 
 /*
  * IRQ configuration and ISR handling
@@ -152,4 +163,10 @@ void SPI_IRQHandling(SPI_Handle_t *pSPIHandle);
 uint8_t SPI_SendData_IT(SPI_Handle_t *pSPIHandle, uint8_t *pTxBuffer, uint32_t Len);
 uint8_t SPI_ReceiveData_IT(SPI_Handle_t *pSPIHandle, uint8_t *pTxBuffer, uint32_t Len);
 
+
+/*
+ * Application Callback
+ */
+
+void SPI_ApplicationEventCallback(SPI_Handle_t *pSPIHandle, uint8_t AppEV);
 #endif /* INC_STM32F103_SPI_DRIVER_H_ */
