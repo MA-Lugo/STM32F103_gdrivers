@@ -7,6 +7,12 @@
 
 #include "stm32f103_i2c_driver.h"
 
+static void I2C_GenStartCondition(I2C_RegDef_t *pI2Cx);
+static void I2C_GenStopCondition(I2C_RegDef_t *pI2Cx);
+
+static void I2C_ClearADDRFlag(I2C_RegDef_t *pI2Cx);
+
+
 uint16_t AHB_PreScaler[8] = {2,4,8,16,64,128,256,512};
 uint8_t APB1_PreScaler[4] = {2,4,8,16};
 
@@ -189,3 +195,76 @@ void I2C_PeripheralControl(I2C_RegDef_t *pI2Cx, uint8_t EnOrDis)
 		pI2Cx->CR1 &= ~(1 << I2C_CR1_PE);
 	}
 }
+
+
+/**********************************************************
+ * @fn				- I2C_MASTER_SendData
+ * @brief			- This function send data from the
+ * 					  given I2C port in master mode
+ *
+ *
+ * @param[in]		- Base addres of the SPIx
+ * @param[in]		- user Tx buffer pointer
+ * @param[in]		- length of data (number of bytes)
+ *
+ * @return			- none
+ *
+ * @note			- This is blocking call
+ *********************************************************/
+
+void I2C_MASTER_SendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t Len, uint8_t SlaveAddr)
+{
+	//1. Generate the start condition
+	I2C_GenStartCondition(pI2CHandle->pI2Cx);
+	//2. Confirm that start condition is completed by checking the SB Flag in the SR1
+	//	 Note: Until SB is cleared SCL will be stretched (pulled to LOW)
+	while( ! (pI2CHandle->pI2Cx->SR1 & I2C_FLAG_SB) );
+	//3. Set the address of the slave with the r/w bit set to 0 (8bit total)
+	uint8_t addr = 0;
+	addr = ( (SlaveAddr <<1));
+	addr &= ~(1);
+	pI2CHandle->pI2Cx->OAR1 = (addr);
+	//4. Comfirm that the address phase is completed by the ADDR Flag in the SR1
+	while( ! (pI2CHandle->pI2Cx->SR1 & I2C_FLAG_ADDR) );
+	//5. Clear the ADDR Flag according to its software sequence
+	//	 Note: Until ADDR is cleared SCL will be stretched (pulled to LOW)
+	I2C_ClearADDRFlag(pI2CHandle->pI2Cx);
+	//6. Send data until Len becomes zero
+	while(Len > 0)
+	{
+		while( ! (pI2CHandle->pI2Cx->SR1 & I2C_FLAG_TXE) );
+		pI2CHandle->pI2Cx->DR = *pTxBuffer;
+		pTxBuffer++;
+		Len--;
+
+	}
+	//7. When Len becomes zero wait for TXE=1 and BTF = 1 before generating the STOP condition
+	//	 Note: TXE=1, BTF=1 means that both SR and DR are empty and next transmission should begin
+	// 	 when BTF=1 SCL will be stretched (pulled to LOW)
+	while( ! (pI2CHandle->pI2Cx->SR1 & I2C_FLAG_TXE) );
+	while( ! (pI2CHandle->pI2Cx->SR1 & I2C_FLAG_BTF) );
+
+	//8. Generate STOP condition and master need not to wait for ge completion of the condition.
+	//	 Note:	Generating STOP, automatically clears the BTF
+	I2C_GenStopCondition(pI2CHandle->pI2Cx);
+
+}
+
+static void I2C_GenStartCondition(I2C_RegDef_t *pI2Cx)
+{
+	pI2Cx->CR1 |= (1 << I2C_CR1_START);
+}
+static void I2C_GenStopCondition(I2C_RegDef_t *pI2Cx)
+{
+	pI2Cx->CR1 |= (1 << I2C_CR1_STOP);
+}
+
+
+static void I2C_ClearADDRFlag(I2C_RegDef_t *pI2Cx)
+{
+	uint32_t dummyread = pI2Cx->CR1;
+	dummyread = pI2Cx->CR2;
+	(void)dummyread;
+
+}
+
