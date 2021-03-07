@@ -144,6 +144,20 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
 	}
 	pI2CHandle->pI2Cx->CCR = tempreg;
 
+	//TRISE CONFIGURATION
+	if(pI2CHandle->I2C_Config.I2C_SCLSpeed <= I2C_SCL_SPEED_SM)
+	{
+		//STANDAR MODE
+		tempreg = (RCC_GetPCLK1Value(pI2CHandle->SYSTEM_CLK) / 1000000U ) + 1;
+	}
+	else
+	{
+		//FAST MODE
+		tempreg = ( (RCC_GetPCLK1Value(pI2CHandle->SYSTEM_CLK)*300) / 1000000000U ) + 1;
+
+	}
+
+	pI2CHandle->pI2Cx->TRISE = (tempreg & 0x3F);
 }
 
 
