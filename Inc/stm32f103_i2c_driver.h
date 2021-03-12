@@ -32,6 +32,12 @@ typedef struct
 }I2C_Handle_t;
 
 /*
+ * I2C REPEAT START CONDITION macros
+ */
+#define I2C_RS_ENABLE		SET
+#define I2C_RS_DISABLE		RESET
+
+/*
  * I2C Related Status Flags Definitions
  */
 #define I2C_FLAG_TXE				(1 << I2C_SR1_TxE)
@@ -91,9 +97,9 @@ void I2C_PeripheralControl(I2C_RegDef_t *pI2Cx, uint8_t EnOrDis);
 /*
  * Send and Receive Data
  */
-void I2C_MASTER_SendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t Len,uint8_t SlaveAddr);
+void I2C_MASTER_SendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t Len,uint8_t SlaveAddr,uint8_t I2C_RS_EnOrDis);
 
-void I2C_MASTER_ReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint8_t Len, uint8_t SlaveAddr);
+void I2C_MASTER_ReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint8_t Len, uint8_t SlaveAddr,uint8_t I2C_RS_EnOrDis);
 
 /*
  * IRQ configuration and ISR handling

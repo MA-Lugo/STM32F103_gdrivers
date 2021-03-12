@@ -217,16 +217,19 @@ void I2C_PeripheralControl(I2C_RegDef_t *pI2Cx, uint8_t EnOrDis)
  * 					  given I2C port in master mode
  *
  *
- * @param[in]		- Base addres of the SPIx
+ * @param[in]		- I2C  handle structure
  * @param[in]		- user Tx buffer pointer
  * @param[in]		- length of data (number of bytes)
+ * @param[in]		- Slave Address
+ * @param[in]		- Repeat Restart Condition EnOrDis
+ *
  *
  * @return			- none
  *
  * @note			- This is blocking call
  *********************************************************/
 
-void I2C_MASTER_SendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t Len, uint8_t SlaveAddr)
+void I2C_MASTER_SendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t Len, uint8_t SlaveAddr,uint8_t I2C_RS_EnOrDis)
 {
 	//1. Generate the start condition
 	I2C_GenStartCondition(pI2CHandle->pI2Cx);
@@ -260,12 +263,32 @@ void I2C_MASTER_SendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t 
 
 	//8. Generate STOP condition and master need not to wait for ge completion of the condition.
 	//	 Note:	Generating STOP, automatically clears the BTF
-	I2C_GenStopCondition(pI2CHandle->pI2Cx);
+
+	if(I2C_RS_EnOrDis == I2C_RS_DISABLE)
+	{
+		I2C_GenStopCondition(pI2CHandle->pI2Cx);
+	}
 
 }
 
-
-void I2C_MASTER_ReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint8_t Len, uint8_t SlaveAddr)
+/**********************************************************
+ * @fn				- I2C_MASTER_ReceiveData
+ * @brief			- This function send data from the
+ * 					  given I2C port in master mode
+ *
+ *
+ * @param[in]		- I2C  handle structure
+ * @param[in]		- User Rx buffer pointer
+ * @param[in]		- Length of data (number of bytes)
+ * @param[in]		- Slave Address
+ * @param[in]		- Repeat Restart Condition EnOrDis
+ *
+ *
+ * @return			- none
+ *
+ * @note			- This is blocking call
+ *********************************************************/
+void I2C_MASTER_ReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint8_t Len, uint8_t SlaveAddr,uint8_t I2C_RS_EnOrDis)
 {
 
 	//1. Generate the START condition
@@ -292,7 +315,10 @@ void I2C_MASTER_ReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint8_
 		//wait until  RXNE becomes 1
 		while( ! (pI2CHandle->pI2Cx->SR1 & I2C_FLAG_RXNE) );
 		//generate STOP condition
-		I2C_GenStopCondition(pI2CHandle->pI2Cx);
+		if(I2C_RS_EnOrDis == I2C_RS_DISABLE)
+		{
+			I2C_GenStopCondition(pI2CHandle->pI2Cx);
+		}
 		//read data in to buffer
 		*pRxBuffer = pI2CHandle->pI2Cx->DR;
 
@@ -317,7 +343,10 @@ void I2C_MASTER_ReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint8_
 				I2C_ManageAcking(pI2CHandle->pI2Cx, I2C_ACK_DISABLE);
 
 				//generate STOP condition
-				I2C_GenStopCondition(pI2CHandle->pI2Cx);
+				if(I2C_RS_EnOrDis == I2C_RS_DISABLE)
+				{
+					I2C_GenStopCondition(pI2CHandle->pI2Cx);
+				}
 
 			}
 
