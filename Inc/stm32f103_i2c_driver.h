@@ -93,6 +93,7 @@ void I2C_PeripheralControl(I2C_RegDef_t *pI2Cx, uint8_t EnOrDis);
  */
 void I2C_MASTER_SendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t Len,uint8_t SlaveAddr);
 
+void I2C_MASTER_ReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint8_t Len, uint8_t SlaveAddr);
 
 /*
  * IRQ configuration and ISR handling
@@ -104,5 +105,6 @@ void I2C_IRQPiority_Config(uint8_t IRQNumber, uint32_t IRQPriority);
 /*
  * Others
  */
+void I2C_ManageAcking(I2C_RegDef_t *pI2Cx, uint8_t EnOrDis);
 
 #endif /* INC_STM32F103_I2C_DRIVER_H_ */
