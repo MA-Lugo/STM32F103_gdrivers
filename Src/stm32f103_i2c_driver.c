@@ -401,3 +401,164 @@ static void I2C_ClearADDRFlag(I2C_RegDef_t *pI2Cx)
 
 }
 
+
+/**********************************************************
+ * @fn				- I2C_IRQInterrupt_Config
+ * @brief			- This function configure the given IRQ Number
+ *
+ *
+ * @param[in]		- IRQ_NO macros
+ * @param[in]		- ENABLE or DISABLE macros
+ *
+ * @return			- none
+ *
+ * @note			-
+ *********************************************************/
+void I2C_IRQInterrupt_Config(uint8_t IRQNumber, uint8_t EnorDi)
+{
+	if (EnorDi == ENABLE)
+		{
+			if (IRQNumber <= 31)						//ISER0 register
+			{
+				*NVIC_ISER0 |= (1 << IRQNumber);
+			}
+			else if (IRQNumber > 31 &&  IRQNumber < 64)//ISER1 register
+			{
+				*NVIC_ISER1 |= (1 << IRQNumber % 32);
+			}
+			else if (IRQNumber >= 64 && IRQNumber < 96)//ISER2 register
+			{
+				*NVIC_ISER2 |= (1 << IRQNumber % 64);
+			}
+
+		}
+
+		else
+		{
+			if (IRQNumber <= 31)						//ICER0 register
+			{
+				*NVIC_ICER0 |= (1 << IRQNumber);
+			}
+			else if (IRQNumber > 31 &&  IRQNumber < 64)//ISER1 register
+			{
+				*NVIC_ICER1 |= (1 << IRQNumber % 32);
+			}
+			else if (IRQNumber >= 64 && IRQNumber < 96)//ISER2 register
+			{
+				*NVIC_ICER2 |= (1 << IRQNumber % 64);
+			}
+		}
+}
+
+/**********************************************************
+ * @fn				- I2C_IRQPiority_Config
+ * @brief			- This function set the priority of the
+ * 					- given IRQ number
+ *
+ * @param[in]		- IRQ number
+ * @param[in]		- Priority value
+ *
+ * @return			- none
+ *
+ * @note			- none
+ **************************************************************/
+void I2C_IRQPiority_Config(uint8_t IRQNumber, uint32_t IRQPriority)
+{
+	uint8_t iprx = IRQNumber / 4;
+	uint8_t iprx_section = IRQNumber % 4;
+	uint8_t shift_amount = (8 * iprx_section) + (8 - NO_PR_BITS_IMPLEMENT);
+
+	*(NVIC_PR_BASEADDR + iprx) |= (IRQPriority << shift_amount);
+}
+
+/**********************************************************
+ * @fn				- I2C_MASTER_SendData_IT
+ * @brief			- This function send data from the
+ * 						given I2C Handle with interrupts
+ *
+ * @param[in]		- I2C Handke structure
+ * @param[in]		- Tx Buffer pointer
+ * @param[in]		- Len
+ * @param[in]		- Slave Address
+ * @param[in]		- Repeat Start EnOrDis
+ *
+ * @return			- none
+ *
+ * @note			- none
+ *********************************************************/
+uint8_t I2C_MASTER_SendData_IT(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t Len,uint8_t SlaveAddr,uint8_t I2C_RS_EnOrDis)
+{
+	uint8_t state = pI2CHandle->TxRxState;
+
+	if( (state != I2C_BUSY_IN_TX) && (state != I2C_BUSY_IN_RX))
+	{
+		pI2CHandle->pTxBuffer = pTxBuffer;
+		pI2CHandle->TxLen = Len;
+		pI2CHandle->TxRxState = I2C_BUSY_IN_TX;
+		pI2CHandle->DevAddress = SlaveAddr;
+		pI2CHandle->Sr = I2C_RS_EnOrDis;
+
+		//Implement code to Generate START Condition
+		I2C_GenStartCondition(pI2CHandle->pI2Cx);
+
+		//Implement the code to enable ITBUFEN Control Bit
+		pI2CHandle->pI2Cx->CR2 |= ( 1 << I2C_CR2_ITBUFEN);
+
+		//Implement the code to enable ITEVTEN Control Bit
+		pI2CHandle->pI2Cx->CR2 |= ( 1 << I2C_CR2_ITEVTEN);
+
+		//Implement the code to enable ITERREN Control Bit
+		pI2CHandle->pI2Cx->CR2 |= ( 1 << I2C_CR2_ITERREN);
+
+	}
+
+	return state;
+}
+
+/**********************************************************
+ * @fn				- I2C_MASTER_ReceiveData_IT
+ * @brief			- This function receive data from the
+ * 						given I2C Handle with interrupts
+ *
+ * @param[in]		- I2C Handle structure
+ * @param[in]		- Rx Buffer pointer
+ * @param[in]		- Len
+ * @param[in]		- Slave Address
+ * @param[in]		- Repeat Start EnOrDis
+ *
+ * @return			- none
+ *
+ * @note			- none
+ *********************************************************/
+uint8_t I2C_MASTER_ReceiveData_IT(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint8_t Len, uint8_t SlaveAddr,uint8_t I2C_RS_EnOrDis)
+{
+
+	uint8_t state = pI2CHandle->TxRxState;
+
+	if( (state != I2C_BUSY_IN_TX) && (state != I2C_BUSY_IN_RX))
+	{
+		pI2CHandle->pRxBuffer = pRxBuffer;
+		pI2CHandle->RxLen = Len;
+		pI2CHandle->TxRxState = I2C_BUSY_IN_RX;
+		pI2CHandle->RxSize = Len; //Rxsize is used in the ISR code to manage the data reception
+		pI2CHandle->DevAddress = SlaveAddr;
+		pI2CHandle->Sr = I2C_RS_EnOrDis;
+
+		//Implement code to Generate START Condition
+		I2C_GenStartCondition(pI2CHandle->pI2Cx);
+
+		//Implement the code to enable ITBUFEN Control Bit
+		pI2CHandle->pI2Cx->CR2 |= ( 1 << I2C_CR2_ITBUFEN);
+
+		//Implement the code to enable ITEVTEN Control Bit
+		pI2CHandle->pI2Cx->CR2 |= ( 1 << I2C_CR2_ITEVTEN);
+
+		//Implement the code to enable ITERREN Control Bit
+		pI2CHandle->pI2Cx->CR2 |= ( 1 << I2C_CR2_ITERREN);
+
+	}
+
+	return state;
+}
+
+

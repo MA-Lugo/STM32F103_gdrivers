@@ -29,7 +29,24 @@ typedef struct
 	uint32_t	 SYSTEM_CLK;
 	I2C_RegDef_t *pI2Cx;
 	I2C_Config_t I2C_Config;
+
+	uint8_t			*pTxBuffer; 	/* !< To store the app. TX buffer address >*/
+	uint8_t			*pRxBuffer;		/* !< To store the app. RX buffer address >*/
+	uint32_t		TxLen;			/* !< To store the TX len >*/
+	uint32_t		RxLen;			/* !< To store the Rx len >*/
+	uint8_t			TxRxState;		/* !< To store the communication state >*/
+	uint8_t			DevAddress;		/* !< To store the slave/device address >*/
+	uint32_t 		RxSize;			/* !< To store the RX Size >*/
+	uint8_t			Sr;				/* !< To store the repeat start value >*/
 }I2C_Handle_t;
+
+/*
+ * SPI Application States
+ */
+#define I2C_READY					0
+#define I2C_BUSY_IN_TX				1
+#define I2C_BUSY_IN_RX				2
+
 
 /*
  * I2C REPEAT START CONDITION macros
@@ -107,6 +124,13 @@ void I2C_MASTER_ReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint8_
 
 void I2C_IRQInterrupt_Config(uint8_t IRQNumber, uint8_t EnorDi);
 void I2C_IRQPiority_Config(uint8_t IRQNumber, uint32_t IRQPriority);
+
+/*
+ * Send and Receive Data with Interrupts
+ */
+uint8_t I2C_MASTER_SendData_IT(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t Len,uint8_t SlaveAddr,uint8_t I2C_RS_EnOrDis);
+uint8_t I2C_MASTER_ReceiveData_IT(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint8_t Len, uint8_t SlaveAddr,uint8_t I2C_RS_EnOrDis);
+
 
 /*
  * Others
