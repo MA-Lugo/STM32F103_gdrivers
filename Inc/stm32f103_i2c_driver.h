@@ -49,6 +49,21 @@ typedef struct
 
 
 /*
+ * POSSIBLE I2C Applications evens
+ */
+
+#define I2C_EVENT_TX_CMPLT			0
+#define I2C_EVENT_RX_CMPLT			1
+#define I2C_EVENT_STOP				2
+
+#define I2C_ERROR_BERR 				3
+#define I2C_ERROR_ARLO 				4
+#define I2C_ERROR_AF    			5
+#define I2C_ERROR_OVR   			6
+#define I2C_ERROR_TIMEOUT 			7
+
+
+/*
  * I2C REPEAT START CONDITION macros
  */
 #define I2C_RS_ENABLE		SET
@@ -118,6 +133,11 @@ void I2C_MASTER_SendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t 
 
 void I2C_MASTER_ReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint8_t Len, uint8_t SlaveAddr,uint8_t I2C_RS_EnOrDis);
 
+void I2C_Close_Transmission(I2C_Handle_t *pI2CHandle);
+void I2C_Close_Reception(I2C_Handle_t *pI2CHandle);
+
+
+
 /*
  * IRQ configuration and ISR handling
  */
@@ -131,10 +151,23 @@ void I2C_IRQPiority_Config(uint8_t IRQNumber, uint32_t IRQPriority);
 uint8_t I2C_MASTER_SendData_IT(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t Len,uint8_t SlaveAddr,uint8_t I2C_RS_EnOrDis);
 uint8_t I2C_MASTER_ReceiveData_IT(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint8_t Len, uint8_t SlaveAddr,uint8_t I2C_RS_EnOrDis);
 
+/*
+ * IRQ Handling
+ */
+void I2C_EV_IRQHandling(I2C_Handle_t *pI2CHandle);
+void I2C_ER_IRQHandling(I2C_Handle_t *pI2CHandle);
+
+
+
 
 /*
  * Others
  */
 void I2C_ManageAcking(I2C_RegDef_t *pI2Cx, uint8_t EnOrDis);
+void I2C_GenStopCondition(I2C_RegDef_t *pI2Cx);
+
+
+void I2C_ApplicationEventCallback(I2C_Handle_t *pI2CHandle, uint8_t AppEV);
+
 
 #endif /* INC_STM32F103_I2C_DRIVER_H_ */
