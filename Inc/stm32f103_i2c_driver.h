@@ -62,6 +62,8 @@ typedef struct
 #define I2C_ERROR_OVR   			6
 #define I2C_ERROR_TIMEOUT 			7
 
+#define I2C_EVENT_DATA_REQ			8
+#define I2C_EVENT_DATA_RCV			9
 
 /*
  * I2C REPEAT START CONDITION macros
@@ -137,6 +139,9 @@ void I2C_Close_Transmission(I2C_Handle_t *pI2CHandle);
 void I2C_Close_Reception(I2C_Handle_t *pI2CHandle);
 
 
+void I2C_SLAVE_SendData(I2C_RegDef_t *pI2Cx, uint8_t data );
+uint8_t I2C_SLAVE_ReceiveData(I2C_RegDef_t *pI2Cx);
+
 
 /*
  * IRQ configuration and ISR handling
@@ -165,6 +170,8 @@ void I2C_ER_IRQHandling(I2C_Handle_t *pI2CHandle);
  */
 void I2C_ManageAcking(I2C_RegDef_t *pI2Cx, uint8_t EnOrDis);
 void I2C_GenStopCondition(I2C_RegDef_t *pI2Cx);
+
+void I2C_SLAVE_ManageCallbackEvents(I2C_RegDef_t *pI2Cx, uint8_t EnOrDis);
 
 
 void I2C_ApplicationEventCallback(I2C_Handle_t *pI2CHandle, uint8_t AppEV);

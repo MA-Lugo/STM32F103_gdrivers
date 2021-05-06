@@ -385,6 +385,22 @@ void I2C_ManageAcking(I2C_RegDef_t *pI2Cx, uint8_t EnOrDis)
 
 }
 
+void I2C_SLAVE_ManageCallbackEvents(I2C_RegDef_t *pI2Cx, uint8_t EnOrDis)
+{
+	if (EnOrDis == ENABLE)
+	{
+		pI2Cx->CR2 |= (1 << I2C_CR2_ITEVTEN);
+		pI2Cx->CR2 |= (1 << I2C_CR2_ITBUFEN);
+		pI2Cx->CR2 |= (1 << I2C_CR2_ITERREN);
+	}
+	else
+	{
+		pI2Cx->CR2 &= ~(1 << I2C_CR2_ITEVTEN);
+		pI2Cx->CR2 &= ~(1 << I2C_CR2_ITBUFEN);
+		pI2Cx->CR2 &= ~(1 << I2C_CR2_ITERREN);
+	}
+}
+
 static void I2C_GenStartCondition(I2C_RegDef_t *pI2Cx)
 {
 	pI2Cx->CR1 |= (1 << I2C_CR1_START);
@@ -660,6 +676,16 @@ static void I2C_MasterHandleRXNE_IT(I2C_Handle_t *pI2CHandle)
 	}
 }
 
+
+void I2C_SLAVE_SendData(I2C_RegDef_t *pI2Cx, uint8_t data )
+{
+	pI2Cx->DR = data;
+}
+uint8_t I2C_SLAVE_ReceiveData(I2C_RegDef_t *pI2Cx)
+{
+	return (uint8_t)pI2Cx->DR;
+}
+
 void I2C_EV_IRQHandling(I2C_Handle_t *pI2CHandle)
 {
 
@@ -772,6 +798,17 @@ void I2C_EV_IRQHandling(I2C_Handle_t *pI2CHandle)
 
 
 	}
+	else
+	{
+		//SLAVE MODE
+
+		//make shure that the slave is really in transmitter mode
+		if(pI2CHandle->pI2Cx->SR2 & (1 << I2C_SR2_TRA))
+		{
+			I2C_ApplicationEventCallback(pI2CHandle, I2C_EVENT_DATA_REQ);
+		}
+
+	}
 
 
 	temp3 = pI2CHandle->pI2Cx->SR1 & (1 << I2C_SR1_RxNE);
@@ -789,6 +826,16 @@ void I2C_EV_IRQHandling(I2C_Handle_t *pI2CHandle)
 				I2C_MasterHandleRXNE_IT(pI2CHandle);
 			}
 
+		}
+
+		else
+		{
+			//SLAVE MODE
+			//make shure that the slave is really in receiver mode
+					if( !(pI2CHandle->pI2Cx->SR2 & (1 << I2C_SR2_TRA)) )
+					{
+						I2C_ApplicationEventCallback(pI2CHandle, I2C_EVENT_DATA_RCV);
+					}
 		}
 	}
 
