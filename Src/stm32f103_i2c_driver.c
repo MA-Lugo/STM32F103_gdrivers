@@ -61,6 +61,17 @@ void I2C_CLK_Control(I2C_RegDef_t *pI2Cx, uint8_t EnOrDi)
 
 }
 
+/**********************************************************
+ * @fn				-
+ * @brief			- This function gets the frequency of the
+ * 					  APB1 bus.
+ *
+ * @param[in]		- Clock Source.
+ *
+ * @return			- Frequency of the APB1.
+ *
+ * @note			- none
+ *********************************************************/
 uint32_t RCC_GetPCLK1Value(uint32_t CLK_Source)
 {
 	uint32_t pclk1;
@@ -372,6 +383,20 @@ void I2C_MASTER_ReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint8_
 /*
  * Others
  */
+
+
+/**********************************************************
+ * @fn				- I2C_ManageAcking
+ * @brief			- This function Enable or Disable Acking
+ * 					  configuration.
+ *
+ * @param[in]		- Base addres of the I2C port
+ * @param[in]		- ENABLE or DISABLE macros
+ *
+ * @return			- none
+ *
+ * @note			- none
+ *********************************************************/
 void I2C_ManageAcking(I2C_RegDef_t *pI2Cx, uint8_t EnOrDis)
 {
 	if(EnOrDis == I2C_ACK_ENABLE)
@@ -385,6 +410,19 @@ void I2C_ManageAcking(I2C_RegDef_t *pI2Cx, uint8_t EnOrDis)
 
 }
 
+
+/**********************************************************
+ * @fn				- I2C_SLAVE_ManageCallbackEvents
+ * @brief			- This function enable or disable
+ * 					  callback events.
+ *
+ * @param[in]		- Base addres of the I2C port
+ * @param[in]		- ENABLE or DISABLE macros
+ *
+ * @return			- none
+ *
+ * @note			- none
+ *********************************************************/
 void I2C_SLAVE_ManageCallbackEvents(I2C_RegDef_t *pI2Cx, uint8_t EnOrDis)
 {
 	if (EnOrDis == ENABLE)
@@ -401,18 +439,49 @@ void I2C_SLAVE_ManageCallbackEvents(I2C_RegDef_t *pI2Cx, uint8_t EnOrDis)
 	}
 }
 
+
+/**********************************************************
+ * @fn				- I2C_GenStartCondition
+ * @brief			- This function generates a start condition
+ *
+ * @param[in]		- Base addres of the I2C port
+ *
+ * @return			- none
+ *
+ * @note			- none
+ *********************************************************/
 static void I2C_GenStartCondition(I2C_RegDef_t *pI2Cx)
 {
 	pI2Cx->CR1 |= (1 << I2C_CR1_START);
 }
 
 
+/**********************************************************
+ * @fn				- I2C_GenStopCondition
+ * @brief			- This function generates a stop condition
+ *
+ * @param[in]		- Base addres of the I2C port
+ *
+ * @return			- none
+ *
+ * @note			- none
+ *********************************************************/
 void I2C_GenStopCondition(I2C_RegDef_t *pI2Cx)
 {
 	pI2Cx->CR1 |= (1 << I2C_CR1_STOP);
 }
 
 
+/**********************************************************
+ * @fn				- I2C_ClearADDRFlag
+ * @brief			- This function clear the ADDR Flag
+ *
+ * @param[in]		- I2C handle structure
+ *
+ * @return			- none
+ *
+ * @note			- A private function
+ *********************************************************/
 static void I2C_ClearADDRFlag(I2C_Handle_t *pI2CHandle)
 {
 	uint32_t dummyread;
@@ -676,16 +745,56 @@ static void I2C_MasterHandleRXNE_IT(I2C_Handle_t *pI2CHandle)
 	}
 }
 
+/**********************************************************
+ * @fn				- I2C_SLAVE_SendData
+ * @brief			- This function send data from the
+ * 					  given I2C port in slave mode
+ *
+ *
+ * @param[in]		- I2C  base addres
+ * @param[in]		- Data to send
 
+
+ * @return			- none
+ *
+ * @note			- none
+ *********************************************************/
 void I2C_SLAVE_SendData(I2C_RegDef_t *pI2Cx, uint8_t data )
 {
 	pI2Cx->DR = data;
 }
+
+/**********************************************************
+ * @fn				- I2C_SLAVE_ReceiveData
+ * @brief			- This function receive data from the
+ * 					  given I2C port in slave mode
+ *
+ *
+ * @param[in]		- I2C  base addres
+
+
+ * @return			- Data received
+ *
+ * @note			- none
+ *********************************************************/
 uint8_t I2C_SLAVE_ReceiveData(I2C_RegDef_t *pI2Cx)
 {
 	return (uint8_t)pI2Cx->DR;
 }
 
+
+
+/**********************************************************
+ * @fn				- I2C_EV_IRQHandling
+ * @brief			- This function handle IRQ Events
+ *
+ * @param[in]		- I2C Handle structure
+
+ *
+ * @return			- none
+ *
+ * @note			- none
+ *********************************************************/
 void I2C_EV_IRQHandling(I2C_Handle_t *pI2CHandle)
 {
 
@@ -841,18 +950,17 @@ void I2C_EV_IRQHandling(I2C_Handle_t *pI2CHandle)
 
 }
 
-/*********************************************************************
- * @fn      		  - I2C_ER_IRQHandling
+/**********************************************************
+ * @fn				- I2C_ER_IRQHandling
+ * @brief			- This function handle IRQ Errors
  *
- * @brief             -
+ * @param[in]		- I2C Handle structure
+
  *
- * @param[in]         -
- * @param[in]         -
- * @param[in]         -
+ * @return			- none
  *
- * @return            -
- *
- */
+ * @note			- none
+ *********************************************************/
 
 void I2C_ER_IRQHandling(I2C_Handle_t *pI2CHandle)
 {
