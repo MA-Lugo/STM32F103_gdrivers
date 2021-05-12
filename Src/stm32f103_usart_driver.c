@@ -10,6 +10,19 @@
 #include "stm32f103_usart_driver.h"
 
 
+
+/**********************************************************
+ * @fn				- USART_CLK_Control
+ * @brief			- This function enable or disable the peripheral clock
+ * 					  for the given USARTx/UARTx
+ *
+ * @param[in]		- Base addres of the USART/UART port
+ * @param[in]		- ENABLE or DISABLE macros
+ *
+ * @return			- none
+ *
+ * @note			- none
+ *********************************************************/
 void USART_CLK_Control(USART_RegDef_t *pUSARTx, uint8_t EnOrDi)
 {
 	if (EnOrDi == ENABLE)
