@@ -15,7 +15,7 @@
 typedef struct
 {
 	uint8_t		USART_Mode;
-	uint8_t		USART_Baud;
+	uint32_t	USART_Baud;
 	uint8_t		USART_StopBits;
 	uint8_t		USART_WordLenght;
 	uint8_t		USART_Parity;
