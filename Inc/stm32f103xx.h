@@ -204,13 +204,13 @@ typedef struct
 
 typedef struct
 {
-	volatile uint32_t	USART_SR;	//Status register									OFSET:0x00
-	volatile uint32_t	USART_DR;	//Data register										OFSET:0x04
-	volatile uint32_t	USART_BRR;	//Baud rate register								OFSET:0x08
-	volatile uint32_t	USART_CR1;	//Control register 1								OFSET:0x0C
-	volatile uint32_t	USART_CR2;	//Control register 2								OFSET:0x10
-	volatile uint32_t	USART_CR3;	//Control register 3								OFSET:0x14
-	volatile uint32_t	USART_GTPR;	//Guard time and prescaler register					OFSET:0x18
+	volatile uint32_t	SR;				//Status register									OFSET:0x00
+	volatile uint32_t	DR;				//Data register										OFSET:0x04
+	volatile uint32_t	BRR;			//Baud rate register								OFSET:0x08
+	volatile uint32_t	CR1;			//Control register 1								OFSET:0x0C
+	volatile uint32_t	CR2;			//Control register 2								OFSET:0x10
+	volatile uint32_t	CR3;			//Control register 3								OFSET:0x14
+	volatile uint32_t	GTPR;			//Guard time and prescaler register					OFSET:0x18
 }USART_RegDef_t;
 
 
