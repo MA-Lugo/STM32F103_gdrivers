@@ -121,7 +121,7 @@ typedef struct
  */
 void I2C_CLK_Control(I2C_RegDef_t *pI2Cx, uint8_t EnOrDi);
 
-uint32_t RCC_GetPCLK1Value(uint32_t CLK_Source);
+
 void I2C_Init(I2C_Handle_t *pI2CHandle);
 
 void I2C_DeInit(I2C_RegDef_t *pI2Cx);
